@@ -62,7 +62,7 @@ def atmos(h,T=None):
     dhstrat = np.maximum(0.0, h - 11000.0)
     rho = rhotrop * np.exp(-dhstrat / 6341.552161)
     p = rho * R * T
-    return p, rho, T
+    return p, rho, T+T0
 
 
 def temperature(h):
@@ -76,7 +76,7 @@ def temperature(h):
 
     """
     p, r, T = atmos(h)
-    return T
+    return T+T0
 
 
 def pressure(h,T=None):
