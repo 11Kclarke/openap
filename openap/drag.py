@@ -84,14 +84,14 @@ class Drag(object):
         return cl
 
     @ndarrayconvert
-    def _calc_drag(self, mass, tas, alt, cd0, k, path_angle):
+    def _calc_drag(self, mass, tas, alt, cd0, k, path_angle,T=None):
         v = tas * self.aero.kts
         h = alt * self.aero.ft
         gamma = path_angle * self.np.pi / 180
 
         S = self.aircraft["wing"]["area"]
 
-        rho = self.aero.density(h)
+        rho = self.aero.density(h,T=T)
         qS = 0.5 * rho * v ** 2 * S
         L = mass * self.aero.g0 * self.np.cos(gamma)
         qS = self.np.where(qS < 1e-3, 1e-3, qS)
@@ -174,7 +174,7 @@ class Drag(object):
             * (SfS)
             * self.np.sin(flap_angle * self.np.pi / 180) ** 2
         )
-        if len(landing_gear)>0:
+        if hasattr(landing_gear, '__iter__'):
             delta_cd_gear=np.zeros_like(landing_gear)
             delta_cd_gear[landing_gear] = (self.aircraft["limits"]["MTOW"]
                 * 9.8065

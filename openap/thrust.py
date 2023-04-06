@@ -135,7 +135,7 @@ class Thrust(object):
         return self.climb(tas, alt, roc=0)
 
     @ndarrayconvert
-    def climb(self, tas, alt, roc):
+    def climb(self, tas, alt, roc,mach=None,vcas=None,T=None):
         """Calculate thrust during the climb.
 
         Args:
@@ -151,17 +151,18 @@ class Thrust(object):
 
         h = alt * self.aero.ft
         tas = self.np.where(tas < 10, 10, tas)
+        if mach is None:
+            mach = self.aero.tas2mach(tas * self.aero.kts, h,T=T)
+        if vcas is None:
+            vcas = self.aero.tas2cas(tas * self.aero.kts, h,T=T)
 
-        mach = self.aero.tas2mach(tas * self.aero.kts, h)
-        vcas = self.aero.tas2cas(tas * self.aero.kts, h)
-
-        P = self.aero.pressure(h)
-        P10 = self.aero.pressure(10000 * self.aero.ft)
-        Pcr = self.aero.pressure(self.cruise_alt * self.aero.ft)
+        P = self.aero.pressure(h,T=T)
+        P10 = self.aero.pressure(10000 * self.aero.ft,T=T)
+        Pcr = self.aero.pressure(self.cruise_alt * self.aero.ft,T=T)
 
         # approximate thrust at top of climb (REF 2)
         Fcr = self.eng_cruise_thrust * self.eng_number
-        vcas_ref = self.aero.mach2cas(self.cruise_mach, self.cruise_alt * self.aero.ft)
+        vcas_ref = self.aero.mach2cas(self.cruise_mach, self.cruise_alt * self.aero.ft,T=T)
 
         # segment 3: alt > 30000:
         d = self._dfunc(mach / self.cruise_mach)
