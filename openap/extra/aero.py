@@ -58,11 +58,14 @@ def atmos(h,T=None):
     """
     if T is None:
         T = np.maximum(288.15 - 0.0065 * h, 216.65)
+    else:
+        T=T+T0
+
     rhotrop = 1.225 * (T / 288.15) ** 4.256848030018761
     dhstrat = np.maximum(0.0, h - 11000.0)
     rho = rhotrop * np.exp(-dhstrat / 6341.552161)
     p = rho * R * T
-    return p, rho, T+T0
+    return p, rho, T
 
 
 def temperature(h):
@@ -76,7 +79,7 @@ def temperature(h):
 
     """
     p, r, T = atmos(h)
-    return T+T0
+    return T
 
 
 def pressure(h,T=None):
@@ -119,6 +122,8 @@ def vsound(h,T=None):
     """
     if T is None:
         T = temperature(h)
+    else:
+        T=T+T0
     a = np.sqrt(gamma * R * T)
     return a
 
@@ -192,6 +197,7 @@ def h_isa(p,T=None):
         T = T0 * (p0 / p) ** ((-0.0065 * R) / g0)
         T1 = T0 - 0.0065 * (11000)
     else:
+        T=T+T0
         T1=T
     h = (T - T0) / -0.0065
 
