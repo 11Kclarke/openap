@@ -118,7 +118,7 @@ class FuelFlow(object):
         return fuelflow
 
     @ndarrayconvert
-    def enroute(self, mass, tas, alt, path_angle=0, limit=True):
+    def enroute(self, mass, tas, alt, path_angle=0, limit=True,T=None,mach=None):
         """Compute the fuel flow during climb, cruise, or descent.
 
         The net thrust is first estimated based on the dynamic equation.
@@ -135,7 +135,7 @@ class FuelFlow(object):
             float: Fuel flow (unit: kg/s).
 
         """
-        D = self.drag.clean(mass=mass, tas=tas, alt=alt, path_angle=path_angle)
+        D = self.drag.clean(mass=mass, tas=tas, alt=alt, path_angle=path_angle,T=T,mach=mach)
 
         # Convert angles from degrees to radians.
         gamma = path_angle * 3.142 / 180

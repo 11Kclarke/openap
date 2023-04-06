@@ -101,7 +101,7 @@ class Drag(object):
         return D
 
     @ndarrayconvert
-    def clean(self, mass, tas, alt, path_angle=0):
+    def clean(self, mass, tas, alt, path_angle=0,T=None,mach=None):
         """Compute drag at clean configuration (considering compressibility).
 
         Args:
@@ -119,7 +119,9 @@ class Drag(object):
         k = self.polar["clean"]["k"]
 
         if self.wave_drag:
-            mach = self.aero.tas2mach(tas * self.aero.kts, alt * self.aero.ft)
+            if mach is None:
+                mach = self.aero.tas2mach(tas * self.aero.kts, alt * self.aero.ft,T=T)
+                
             cl = self._cl(mass, tas, alt, path_angle)
 
             sweep = math.radians(self.aircraft["wing"]["sweep"])
@@ -141,11 +143,11 @@ class Drag(object):
 
         cd0 = cd0 + dCdw
 
-        D = self._calc_drag(mass, tas, alt, cd0, k, path_angle)
+        D = self._calc_drag(mass, tas, alt, cd0, k, path_angle,T=T)
         return D
 
     @ndarrayconvert
-    def nonclean(self, mass, tas, alt, flap_angle, path_angle=0, landing_gear=False):
+    def nonclean(self, mass, tas, alt, flap_angle, path_angle=0, landing_gear=False,T=None):
         """Compute drag at at non-clean configuration.
 
         Args:
@@ -205,5 +207,5 @@ class Drag(object):
         ar = self.aircraft["wing"]["span"] ** 2 / self.aircraft["wing"]["area"]
         k_total = 1 / (1 / k + self.np.pi * ar * delta_e_flap)
 
-        D = self._calc_drag(mass, tas, alt, cd0_total, k_total, path_angle)
+        D = self._calc_drag(mass, tas, alt, cd0_total, k_total, path_angle,T=T)
         return D
