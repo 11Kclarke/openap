@@ -9,7 +9,7 @@ import math
 import warnings
 from . import prop
 from .extra import ndarrayconvert
-
+import numpy as np
 
 curr_path = os.path.dirname(os.path.realpath(__file__))
 dir_dragpolar = curr_path + "/data/dragpolar/"
@@ -174,8 +174,16 @@ class Drag(object):
             * (SfS)
             * self.np.sin(flap_angle * self.np.pi / 180) ** 2
         )
+        if len(landing_gear)>0:
+            delta_cd_gear=np.zeros_like(landing_gear)
+            delta_cd_gear[landing_gear] = (self.aircraft["limits"]["MTOW"]
+                * 9.8065
+                / self.aircraft["wing"]["area"]
+                * 3.16e-5
+                * self.aircraft["limits"]["MTOW"] ** (-0.215)
+            )
+        elif landing_gear:
 
-        if landing_gear:
             delta_cd_gear = (
                 self.aircraft["limits"]["MTOW"]
                 * 9.8065
