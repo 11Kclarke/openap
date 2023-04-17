@@ -99,6 +99,23 @@ class Drag(object):
         cd = cd0 + k * cl ** 2
         D = cd * qS
         return D
+    
+    @ndarrayconvert
+    def lift_drag_ratio(self, mass, tas, alt, cd0, k, path_angle,T=None):
+        v = tas * self.aero.kts
+        h = alt * self.aero.ft
+        gamma = path_angle * self.np.pi / 180
+
+        S = self.aircraft["wing"]["area"]
+
+        rho = self.aero.density(h,T=T)
+        qS = 0.5 * rho * v ** 2 * S
+        L = mass * self.aero.g0 * self.np.cos(gamma)
+        qS = self.np.where(qS < 1e-3, 1e-3, qS)
+        cl = L / qS
+        cd = cd0 + k * cl ** 2
+        
+        return cl/cd
 
     @ndarrayconvert
     def clean(self, mass, tas, alt, path_angle=0,T=None,mach=None):
