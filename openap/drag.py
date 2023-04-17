@@ -115,7 +115,7 @@ class Drag(object):
         cl = L / qS
         cd = cd0 + k * cl ** 2
         
-        return cl/cd
+        return cl,cd
 
     @ndarrayconvert
     def clean(self, mass, tas, alt, path_angle=0,T=None,mach=None):
