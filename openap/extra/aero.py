@@ -61,11 +61,14 @@ def atmos(h,T=None):
     else:
         T=T+T0
 
-    rhotrop = 1.225 * (T / T0) ** 4.256848030018761
-    dhstrat = np.maximum(0.0, h - 11000.0)
-    rho = rhotrop * np.exp(-dhstrat / 6341.552161)
-    p=1013.125*(1-h/44307.694)**5.25530
+    # rhotrop = 1.225 * (T / T0) ** 4.256848030018761
+    # dhstrat = np.maximum(0.0, h - 11000.0)
+    # rho = rhotrop * np.exp(-dhstrat / 6341.552161)
     #p = rho * R * T
+    p=1013.125*(1-h/44307.694)**5.25530
+    
+    rho= p/(R*T)
+    
     return p, rho, T
 
 
