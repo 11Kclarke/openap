@@ -36,7 +36,7 @@ g0 = 9.80665  # m/s2, Sea level gravity constant
 R = 287.05287  # m2/(s2 x K), gas constant, sea level ISA
 p0 = 101325.0  # Pa, air pressure, sea level ISA
 rho0 = 1.225  # kg/m3, air density, sea level ISA
-T0 = 288.15  # K, temperature, sea level ISA
+T0 = 273.15#288.15  # K, temperature, sea level ISA
 gamma = 1.40  # cp/cv for air
 gamma1 = 0.2  # (gamma-1)/2 for air
 gamma2 = 3.5  # gamma/(gamma-1) for air
@@ -57,14 +57,15 @@ def atmos(h,T=None):
 
     """
     if T is None:
-        T = np.maximum(288.15 - 0.0065 * h, 216.65)
+        T = np.maximum(T0 - 0.0065 * h, 216.65)
     else:
         T=T+T0
 
-    rhotrop = 1.225 * (T / 288.15) ** 4.256848030018761
+    rhotrop = 1.225 * (T / T0) ** 4.256848030018761
     dhstrat = np.maximum(0.0, h - 11000.0)
     rho = rhotrop * np.exp(-dhstrat / 6341.552161)
-    p = rho * R * T
+    p=1013.125*(1-h/44307.694)**5.25530
+    #p = rho * R * T
     return p, rho, T
 
 
@@ -78,7 +79,9 @@ def temperature(h):
         float or ndarray: Air temperature (K).
 
     """
+    
     p, r, T = atmos(h)
+    
     return T
 
 
